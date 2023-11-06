@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Dashboard</title>
+  <style>
+    * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+  }
+  
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #007bff;
+    padding: 10px 20px;
+    color: #fff;
+  }
+  
+  h1 {
+    font-size: 24px;
+    text-transform: uppercase;
+  }
+  
+  .header-buttons {
+    display: flex;
+  }
+  
+  .header-buttons a {
+    margin-left: 10px;
+    text-decoration: none;
+  }
+  
+  .header-buttons button {
+    padding: 8px 15px;
+    background-color: transparent;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    text-transform: uppercase;
+  }
+  
+  /* Additional styles for admin dashboard content */
+  main {
+    padding: 20px;
+  }
+  
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Admin Dashboard</h1>
+    <div class="header-buttons">
+      <a href="add-flight.html"><button>Add Flights</button></a>
+      <a href="remove-flight.html"><button>Remove Flights</button></a>
+      <a href="view-bookings.html"><button>View Bookings</button></a>
+      <button type=" ">Logout</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Content of admin dashboard -->
+  </main>
+
+  <script src="main.js" defer></script>
+</body>
+</html>

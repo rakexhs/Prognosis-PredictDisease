@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Prognosis : AI Disease Detection System</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      background-image: url('/img/bgpho.jpg');
+      /* Update the path */
+      background-size: 100% 100%;
+      background-position: center;
+      background-attachment: fixed;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      text-align: center;
+      background-color: #007bff;
+      padding: 10px 20px;
+      color: #fff;
+      height: 50px;
+    }
+
+    h1 {
+      font-size: 24px;
+      text-transform: uppercase;
+      margin: 0;
+      flex: 1;
+      /* Allow the h1 element to take the available space and be centered */
+    }
+
+    .auth-buttons {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #007bff;
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+      color: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      height: 50px;
+      /* Set a fixed height for the auth-buttons div */
+    }
+
+    .plslogin {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #007bff;
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+      color: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      height: 50px;
+    }
+
+    main {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      height: 340px;
+    }
+
+    h2 {
+      font-size: 18px;
+      margin: 0 0 10px;
+      text-transform: uppercase;
+    }
+
+    input[type="text"] {
+      width: 96%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+    }
+
+    select#symptomsSelect {
+      width: calc(100% - 2px);
+      /* Subtract 2px to compensate for the scrollbar width */
+      height: 150px;
+      /* Set the height to display multiple symptoms */
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      overflow-y: auto;
+      /* Add a scrollbar if the list is too long */
+      background-color: #fff;
+      /* Set background color for the dropdown */
+    }
+
+    button {
+      padding: 10px 15px;
+      text-decoration: solid;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #predictionResult {
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    #my-prediction-section {
+      margin-top: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th,
+    td {
+      padding: 8px;
+      border-bottom: 1px solid #ccc;
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <header>
+    <h1>Prognosis : AI Disease Detection System</h1>
+  </header>
+
+  <main class="main">
+    <h2 style="text-align: center;">Enter Symptoms</h2>
+    <!-- Add the datalist element to show the user the list of symptoms -->
+    <input type="text" id="symptomsInput"
+      placeholder="Enter Symptoms from below options separated by comma or select directly" list="symptomsList">
+    <select id="symptomsSelect" multiple size="6">
+      <option value="Itching">Itching</option>
+      <option value="Skin Rash">Skin Rash</option>
+      <option value="Nodal Skin Eruptions">Nodal Skin Eruptions</option>
+      <option value="Continuous Sneezing">Continuous Sneezing</option>
+      <option value="Shivering">Shivering</option>
+      <option value="Chills">Chills</option>
+      <option value="Joint Pain">Joint Pain</option>
+      <option value="Stomach Pain">Stomach Pain</option>
+      <option value="Acidity">Acidity</option>
+      <option value="Ulcers on Tongue">Ulcers on Tongue</option>
+      <option value="Muscle Wasting">Muscle Wasting</option>
+      <option value="Vomiting">Vomiting</option>
+      <option value="Burning Micturition">Burning Micturition</option>
+      <option value="Spotting Urination">Spotting Urination</option>
+      <option value="Fatigue">Fatigue</option>
+      <option value="Weight Gain">Weight Gain</option>
+      <option value="Anxiety">Anxiety</option>
+      <option value="Cold Hands and Feets">Cold Hands and Feets</option>
+      <option value="Mood Swings">Mood Swings</option>
+      <option value="Weight Loss">Weight Loss</option>
+      <option value="Restlessness">Restlessness</option>
+      <option value="Lethargy">Lethargy</option>
+      <option value="Patches in Throat">Patches in Throat</option>
+      <option value="Irregular Sugar Level">Irregular Sugar Level</option>
+      <option value="Cough">Cough</option>
+      <option value="High Fever">High Fever</option>
+      <option value="Sunken Eyes">Sunken Eyes</option>
+      <option value="Breathlessness">Breathlessness</option>
+      <option value="Sweating">Sweating</option>
+      <option value="Dehydration">Dehydration</option>
+      <option value="Indigestion">Indigestion</option>
+      <option value="Headache">Headache</option>
+      <option value="Yellowish Skin">Yellowish Skin</option>
+      <option value="Dark Urine">Dark Urine</option>
+      <option value="Nausea">Nausea</option>
+      <option value="Loss of Appetite">Loss of Appetite</option>
+      <option value="Pain Behind the Eyes">Pain Behind the Eyes</option>
+      <option value="Back Pain">Back Pain</option>
+      <option value="Constipation">Constipation</option>
+      <option value="Abdominal Pain">Abdominal Pain</option>
+      <option value="Diarrhoea">Diarrhoea</option>
+      <option value="Mild Fever">Mild Fever</option>
+      <option value="Yellow Urine">Yellow Urine</option>
+      <option value="Yellowing of Eyes">Yellowing of Eyes</option>
+      <option value="Acute Liver Failure">Acute Liver Failure</option>
+      <option value="Fluid Overload">Fluid Overload</option>
+      <option value="Swelling of Stomach">Swelling of Stomach</option>
+      <option value="Swelled Lymph Nodes">Swelled Lymph Nodes</option>
+      <option value="Malaise">Malaise</option>
+      <option value="Blurred and Distorted Vision">Blurred and Distorted Vision</option>
+      <option value="Phlegm">Phlegm</option>
+      <option value="Throat Irritation">Throat Irritation</option>
+      <option value="Redness of Eyes">Redness of Eyes</option>
+      <option value="Sinus Pressure">Sinus Pressure</option>
+      <option value="Runny Nose">Runny Nose</option>
+      <option value="Congestion">Congestion</option>
+      <option value="Chest Pain">Chest Pain</option>
+      <option value="Weakness in Limbs">Weakness in Limbs</option>
+      <option value="Fast Heart Rate">Fast Heart Rate</option>
+      <option value="Pain During Bowel Movements">Pain During Bowel Movements</option>
+      <option value="Pain in Anal Region">Pain in Anal Region</option>
+      <option value="Bloody Stool">Bloody Stool</option>
+      <option value="Irritation in Anus">Irritation in Anus</option>
+      <option value="Neck Pain">Neck Pain</option>
+      <option value="Dizziness">Dizziness</option>
+      <option value="Cramps">Cramps</option>
+      <option value="Bruising">Bruising</option>
+      <option value="Obesity">Obesity</option>
+      <option value="Swollen Legs">Swollen Legs</option>
+      <option value="Swollen Blood Vessels">Swollen Blood Vessels</option>
+      <option value="Puffy Face and Eyes">Puffy Face and Eyes</option>
+      <option value="Enlarged Thyroid">Enlarged Thyroid</option>
+      <option value="Brittle Nails">Brittle Nails</option>
+      <option value="Swollen Extremeties">Swollen Extremeties</option>
+      <option value="Excessive Hunger">Excessive Hunger</option>
+      <option value="Extra Marital Contacts">Extra Marital Contacts</option>
+      <option value="Drying and Tingling Lips">Drying and Tingling Lips</option>
+      <option value="Slurred Speech">Slurred Speech</option>
+      <option value="Knee Pain">Knee Pain</option>
+      <option value="Hip Joint Pain">Hip Joint Pain</option>
+      <option value="Muscle Weakness">Muscle Weakness</option>
+      <option value="Stiff Neck">Stiff Neck</option>
+      <option value="Swelling Joints">Swelling Joints</option>
+      <option value="Movement Stiffness">Movement Stiffness</option>
+      <option value="Spinning Movements">Spinning Movements</option>
+      <option value="Loss of Balance">Loss of Balance</option>
+      <option value="Unsteadiness">Unsteadiness</option>
+      <option value="Weakness of One Body Side">Weakness of One Body Side</option>
+      <option value="Loss of Smell">Loss of Smell</option>
+      <option value="Bladder Discomfort">Bladder Discomfort</option>
+      <option value="Foul Smell of Urine">Foul Smell of Urine</option>
+      <option value="Continuous Feel of Urine">Continuous Feel of Urine</option>
+      <option value="Passage of Gases">Passage of Gases</option>
+      <option value="Internal Itching">Internal Itching</option>
+      <option value="Toxic Look (Typhos)">Toxic Look (Typhos)</option>
+      <option value="Depression">Depression</option>
+      <option value="Irritability">Irritability</option>
+      <option value="Muscle Pain">Muscle Pain</option>
+      <option value="Altered Sensorium">Altered Sensorium</option>
+      <option value="Red Spots Over Body">Red Spots Over Body</option>
+      <option value="Belly Pain">Belly Pain</option>
+      <option value="Abnormal Menstruation">Abnormal Menstruation</option>
+      <option value="Dischromic Patches">Dischromic Patches</option>
+      <option value="Watering from Eyes">Watering from Eyes</option>
+      <option value="Increased Appetite">Increased Appetite</option>
+      <option value="Polyuria">Polyuria</option>
+      <option value="Family History">Family History</option>
+      <option value="Mucoid Sputum">Mucoid Sputum</option>
+      <option value="Rusty Sputum">Rusty Sputum</option>
+      <option value="Lack of Concentration">Lack of Concentration</option>
+      <option value="Visual Disturbances">Visual Disturbances</option>
+      <option value="Receiving Blood Transfusion">Receiving Blood Transfusion</option>
+      <option value="Receiving Unsterile Injections">Receiving Unsterile Injections</option>
+      <option value="Coma">Coma</option>
+      <option value="Stomach Bleeding">Stomach Bleeding</option>
+      <option value="Distention of Abdomen">Distention of Abdomen</option>
+      <option value="History of Alcohol Consumption">History of Alcohol Consumption</option>
+      <option value="Fluid Overload">Fluid Overload</option>
+      <option value="Blood in Sputum">Blood in Sputum</option>
+      <option value="Prominent Veins on Calf">Prominent Veins on Calf</option>
+      <option value="Palpitations">Palpitations</option>
+      <option value="Painful Walking">Painful Walking</option>
+      <option value="Pus filled Pimples">Pus-filled Pimples</option>
+      <option value="Blackheads">Blackheads</option>
+      <option value="Scurring">Scurring</option>
+      <option value="Skin Peeling">Skin Peeling</option>
+      <option value="Silver like Dusting">Silver-like Dusting</option>
+      <option value="Small Dents in Nails">Small Dents in Nails</option>
+      <option value="Inflammatory Nails">Inflammatory Nails</option>
+      <option value="Blister">Blister</option>
+      <option value="Red Sore Around Nose">Red Sore Around Nose</option>
+      <option value="Yellow Crust Ooze">Yellow Crust Ooze</option>
+    </select>
+    <button onclick="predictDisease()">Predict</button>
+    <p id="predictionResult"></p>
+  </main>
+  <div class="plslogin">
+    <p>To Save Your Predictions Kindly Login Or Sign Up</p>
+  </div>
+  <div class="auth-buttons">
+    <form action="/login" method="get"><button>
+        <h3>Login</h3>
+      </button></form>
+    <form action="/signup" method="get"><button>
+        <h3>Sign up</h3>
+      </button></form>
+  </div>
+
+  <!-- Your HTML code for the input elements and prediction result display -->
+  <!-- ... -->
+  <script>
+    const symptomList = [
+      "ITCHING", "SKIN RASH", "NODAL SKIN ERUPTIONS", "CONTINUOUS SNEEZING", "SHIVERING", "CHILLS",
+      "JOINT PAIN", "STOMACH PAIN", "ACIDITY", "ULCERS ON TONGUE", "MUSCLE WASTING", "VOMITING",
+      "BURNING MICTURITION", "SPOTTING URINATION", "FATIGUE", "WEIGHT GAIN", "ANXIETY",
+      "COLD HANDS AND FEETS", "MOOD SWINGS", "WEIGHT LOSS", "RESTLESSNESS", "LETHARGY",
+      "PATCHES IN THROAT", "IRREGULAR SUGAR LEVEL", "COUGH", "HIGH FEVER", "SUNKEN EYES",
+      "BREATHLESSNESS", "SWEATING", "DEHYDRATION", "INDIGESTION", "HEADACHE", "YELLOWISH SKIN",
+      "DARK URINE", "NAUSEA", "LOSS OF APPETITE", "PAIN BEHIND THE EYES", "BACK PAIN",
+      "CONSTIPATION", "ABDOMINAL PAIN", "DIARRHOEA", "MILD FEVER", "YELLOW URINE",
+      "YELLOWING OF EYES", "ACUTE LIVER FAILURE", "FLUID OVERLOAD", "SWELLING OF STOMACH",
+      "SWELLED LYMPH NODES", "MALAISE", "BLURRED AND DISTORTED VISION", "PHLEGM",
+      "THROAT IRRITATION", "REDNESS OF EYES", "SINUS PRESSURE", "RUNNY NOSE", "CONGESTION",
+      "CHEST PAIN", "WEAKNESS IN LIMBS", "FAST HEART RATE", "PAIN DURING BOWEL MOVEMENTS",
+      "PAIN IN ANAL REGION", "BLOODY STOOL", "IRRITATION IN ANUS", "NECK PAIN", "DIZZINESS",
+      "CRAMPS", "BRUISING", "OBESITY", "SWOLLEN LEGS", "SWOLLEN BLOOD VESSELS", "PUFFY FACE AND EYES",
+      "ENLARGED THYROID", "BRITTLE NAILS", "SWOLLEN EXTREMETIES", "EXCESSIVE HUNGER",
+      "EXTRA MARITAL CONTACTS", "DRYING AND TINGLING LIPS", "SLURRED SPEECH", "KNEE PAIN",
+      "HIP JOINT PAIN", "MUSCLE WEAKNESS", "STIFF NECK", "SWELLING JOINTS", "MOVEMENT STIFFNESS",
+      "SPINNING MOVEMENTS", "LOSS OF BALANCE", "UNSTEADINESS", "WEAKNESS OF ONE BODY SIDE",
+      "LOSS OF SMELL", "BLADDER DISCOMFORT", "FOUL SMELL OF URINE", "CONTINUOUS FEEL OF URINE",
+      "PASSAGE OF GASES", "INTERNAL ITCHING", "TOXIC LOOK (TYPHOS)", "DEPRESSION", "IRRITABILITY",
+      "MUSCLE PAIN", "ALTERED SENSORIUM", "RED SPOTS OVER BODY", "BELLY PAIN", "ABNORMAL MENSTRUATION",
+      "DISCHROMIC PATCHES", "WATERING FROM EYES", "INCREASED APPETITE", "POLYURIA", "FAMILY HISTORY",
+      "MUCOID SPUTUM", "RUSTY SPUTUM", "LACK OF CONCENTRATION", "VISUAL DISTURBANCES",
+      "RECEIVING BLOOD TRANSFUSION", "RECEIVING UNSTERILE INJECTIONS", "COMA", "STOMACH BLEEDING",
+      "DISTENTION OF ABDOMEN", "HISTORY OF ALCOHOL CONSUMPTION", "FLUID OVERLOAD", "BLOOD IN SPUTUM",
+      "PROMINENT VEINS ON CALF", "PALPITATIONS", "PAINFUL WALKING", "PUS FILLED PIMPLES",
+      "BLACKHEADS", "SCURRING", "SKIN PEELING", "SILVER LIKE DUSTING", "SMALL DENTS IN NAILS",
+      "INFLAMMATORY NAILS", "BLISTER", "RED SORE AROUND NOSE", "YELLOW CRUST OOZE"
+    ];
+
+    // Add an event listener to the select element to handle selection changes
+    document.getElementById('symptomsSelect').addEventListener('change', updateSymptomsInput);
+
+    // Add an event listener to the input textbox to handle typing and pasting
+    const inputTextbox = document.getElementById('symptomsInput');
+    inputTextbox.addEventListener('input', handleInput);
+    inputTextbox.addEventListener('paste', handlePaste);
+
+    function sort_symptoms(symptoms) {
+      return symptoms
+        .split(',')
+        .map(symptom => symptom.trim().toUpperCase())
+        .sort((a, b) => symptomList.indexOf(a) - symptomList.indexOf(b))
+        .join(',');
+    }
+
+    function updateSymptomsInput() {
+      // Get the selected symptoms from the multi-select dropdown and convert them to uppercase
+      const selectedSymptoms = Array.from(document.getElementById('symptomsSelect').selectedOptions)
+        .map(option => option.value.trim().toUpperCase()) // Convert selected symptoms to uppercase and remove leading/trailing spaces
+        .filter(symptom => symptom !== ''); // Filter out empty symptoms
+
+      // Get the current input value from the textbox and convert it to uppercase
+      const currentInputValue = document.getElementById('symptomsInput').value;
+      const currentSymptoms = currentInputValue
+        ? currentInputValue.split(',').map(symptom => symptom.trim().toUpperCase()) // Convert to uppercase and remove leading/trailing spaces
+        : [];
+
+      // Merge the new symptoms with the existing symptoms, and filter out duplicates (case-insensitive comparison)
+      const mergedSymptoms = [...currentSymptoms, ...selectedSymptoms]
+        .filter((symptom, index, self) => self.indexOf(symptom) === index);
+
+      // Sort the symptoms based on the symptomList
+      const sortedSymptoms = sort_symptoms(mergedSymptoms.join(','));
+
+      // Update the text input with the sorted symptoms
+      document.getElementById('symptomsInput').value = sortedSymptoms;
+    }
+    function predictDisease() {
+      updateSymptomsInput();
+      // Get the input symptoms from the textbox
+      const sortedSymptoms = document.getElementById('symptomsInput').value;
+
+      fetch('http://localhost:3500/predict', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `symptoms=${encodeURIComponent(sortedSymptoms.toLowerCase().trim())}`, // Convert to lowercase and remove leading/trailing spaces
+      })
+        .then(response => response.json())
+        .then(data => {
+          const predictionResult = data.prediction;
+          document.getElementById('predictionResult').textContent = `Prediction: ${predictionResult || 'Not available'}`;
+          document.getElementById('symptomsInput').value = '';
+          const selectElement = document.getElementById('symptomsSelect');
+          Array.from(selectElement.options).forEach(option => option.selected = false);
+          setTimeout(() => {
+            document.getElementById('predictionResult').textContent = '';
+          }, 10000); // 10000 milliseconds = 10 seconds
+        })
+        .catch(error => {
+          console.error('Error:', error.message);
+        });
+    }
+
+    // Function to convert the text to uppercase while typing
+    function handleInput(event) {
+      const inputText = event.target.value;
+      event.target.value = inputText.toUpperCase().trim(); // Convert to uppercase and remove leading/trailing spaces
+    }
+
+    // Function to convert the pasted text to uppercase
+    function handlePaste(event) {
+      event.preventDefault();
+      const clipboardText = event.clipboardData.getData('text/plain');
+      const symptomsInUppercase = clipboardText.toUpperCase();
+      document.execCommand('insertText', false, symptomsInUppercase.trim()); // Convert to uppercase and remove leading/trailing spaces
+    }
+  </script>
+
+</body>
+
+</html>

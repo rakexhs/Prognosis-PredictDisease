@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Disease Prediction</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      background-image: url('/img/bgpho.jpg');
+      /* Update the path */
+      background-size: 100% 100%;
+      background-position: center;
+      background-attachment: fixed;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      display: flex;
+      justify-content: flex-end;
+      /* Align buttons to the right */
+      align-items: center;
+      background-color: #007bff;
+      padding: 5px 20px;
+      color: #fff;
+      height: 40px;
+    }
+
+    .header-buttons button {
+      padding: 5px 15px;
+      background-color: transparent;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      text-transform: uppercase;
+      margin-left: 10px;
+    }
+
+    .headd {
+      display: block;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      max-width: 600px;
+      margin: 5px auto;
+      padding: 10px 20px 3px 20px;
+      /* Adjust the padding to control the height */
+      background-color: #007bff;
+      color: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+
+    main {
+      max-width: 600px;
+      margin-top: 5px;
+      margin-bottom: 5px;
+      margin-right: auto;
+      margin-left: auto;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      height: 310px;
+    }
+
+    .buttonss {
+      display: flex;
+      padding: 5px 5px 5px 0px;
+      background-color: transparent;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      font-size: 18px;
+      margin: 0 0 10px;
+      text-transform: uppercase;
+    }
+
+    input[type="text"] {
+      width: 96%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+    }
+
+    select#symptomsSelect {
+      width: calc(100% - 2px);
+      /* Subtract 2px to compensate for the scrollbar width */
+      height: 150px;
+      /* Set the height to display multiple symptoms */
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      overflow-y: auto;
+      /* Add a scrollbar if the list is too long */
+      background-color: #fff;
+      /* Set background color for the dropdown */
+    }
+
+    button {
+      padding: 8px 15px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #predictionResult {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    #my-prediction-section {
+      margin-top: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0px;
+    }
+
+    th,
+    td {
+      padding: 8px;
+      border-bottom: 1px solid #ccc;
+    }
+
+    #buttonpredict {
+      margin-right: 10px;
+      margin-bottom: 0px;
+    }
+
+    #buttonsavepredict {
+      margin-left: 10px;
+      margin-bottom: 0px;
+    }
+
+    .prediction-result {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background-color: #007bff;
+      color: white;
+      padding: 10px;
+      position: relative;
+      margin-left: auto;
+      margin-right: auto;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+    }
+
+    .success-message {
+      display: none;
+      text-align: center;
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px;
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+    }
+
+    #prec {
+      display: none;
+      max-width: 600px;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      margin-right: auto;
+      margin-left: auto;
+      padding: 20px;
+      background-color: #bbeca1;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      height: auto;
+    }
+  </style>
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="header-buttons">
+      <button id="my-predictions-button" onclick="redirectToMyPredictions('<%= email %>', '<%= name %>')">My
+        Predictions</button>
+      <button id="logout-button" onclick="window.location.href='/logout'">Logout</button>
+    </div>
+  </header>
+  <div class="headd">
+    <h2 style="display: block;">Hello <%= name %>
+    </h2>
+    <h2 style="display: block;">This is Your disease prediction AI</h2>
+  </div>
+  <main class="main">
+    <h2 style="text-align: center;">Enter Symptoms</h2>
+    <!-- Add the datalist element to show the user the list of symptoms -->
+    <input type="text" id="symptomsInput"
+      placeholder="Enter 4 or more symptoms for accurate prediction || Choose below symptoms separated by comma" list="symptomsList">
+    <select id="symptomsSelect" multiple size="6">
+      <option value="Itching">Itching</option>
+      <option value="Skin Rash">Skin Rash</option>
+      <option value="Nodal Skin Eruptions">Nodal Skin Eruptions</option>
+      <option value="Continuous Sneezing">Continuous Sneezing</option>
+      <option value="Shivering">Shivering</option>
+      <option value="Chills">Chills</option>
+      <option value="Joint Pain">Joint Pain</option>
+      <option value="Stomach Pain">Stomach Pain</option>
+      <option value="Acidity">Acidity</option>
+      <option value="Ulcers on Tongue">Ulcers on Tongue</option>
+      <option value="Muscle Wasting">Muscle Wasting</option>
+      <option value="Vomiting">Vomiting</option>
+      <option value="Burning Micturition">Burning Micturition</option>
+      <option value="Spotting Urination">Spotting Urination</option>
+      <option value="Fatigue">Fatigue</option>
+      <option value="Weight Gain">Weight Gain</option>
+      <option value="Anxiety">Anxiety</option>
+      <option value="Cold Hands and Feets">Cold Hands and Feets</option>
+      <option value="Mood Swings">Mood Swings</option>
+      <option value="Weight Loss">Weight Loss</option>
+      <option value="Restlessness">Restlessness</option>
+      <option value="Lethargy">Lethargy</option>
+      <option value="Patches in Throat">Patches in Throat</option>
+      <option value="Irregular Sugar Level">Irregular Sugar Level</option>
+      <option value="Cough">Cough</option>
+      <option value="High Fever">High Fever</option>
+      <option value="Sunken Eyes">Sunken Eyes</option>
+      <option value="Breathlessness">Breathlessness</option>
+      <option value="Sweating">Sweating</option>
+      <option value="Dehydration">Dehydration</option>
+      <option value="Indigestion">Indigestion</option>
+      <option value="Headache">Headache</option>
+      <option value="Yellowish Skin">Yellowish Skin</option>
+      <option value="Dark Urine">Dark Urine</option>
+      <option value="Nausea">Nausea</option>
+      <option value="Loss of Appetite">Loss of Appetite</option>
+      <option value="Pain Behind the Eyes">Pain Behind the Eyes</option>
+      <option value="Back Pain">Back Pain</option>
+      <option value="Constipation">Constipation</option>
+      <option value="Abdominal Pain">Abdominal Pain</option>
+      <option value="Diarrhoea">Diarrhoea</option>
+      <option value="Mild Fever">Mild Fever</option>
+      <option value="Yellow Urine">Yellow Urine</option>
+      <option value="Yellowing of Eyes">Yellowing of Eyes</option>
+      <option value="Acute Liver Failure">Acute Liver Failure</option>
+      <option value="Fluid Overload">Fluid Overload</option>
+      <option value="Swelling of Stomach">Swelling of Stomach</option>
+      <option value="Swelled Lymph Nodes">Swelled Lymph Nodes</option>
+      <option value="Malaise">Malaise</option>
+      <option value="Blurred and Distorted Vision">Blurred and Distorted Vision</option>
+      <option value="Phlegm">Phlegm</option>
+      <option value="Throat Irritation">Throat Irritation</option>
+      <option value="Redness of Eyes">Redness of Eyes</option>
+      <option value="Sinus Pressure">Sinus Pressure</option>
+      <option value="Runny Nose">Runny Nose</option>
+      <option value="Congestion">Congestion</option>
+      <option value="Chest Pain">Chest Pain</option>
+      <option value="Weakness in Limbs">Weakness in Limbs</option>
+      <option value="Fast Heart Rate">Fast Heart Rate</option>
+      <option value="Pain During Bowel Movements">Pain During Bowel Movements</option>
+      <option value="Pain in Anal Region">Pain in Anal Region</option>
+      <option value="Bloody Stool">Bloody Stool</option>
+      <option value="Irritation in Anus">Irritation in Anus</option>
+      <option value="Neck Pain">Neck Pain</option>
+      <option value="Dizziness">Dizziness</option>
+      <option value="Cramps">Cramps</option>
+      <option value="Bruising">Bruising</option>
+      <option value="Obesity">Obesity</option>
+      <option value="Swollen Legs">Swollen Legs</option>
+      <option value="Swollen Blood Vessels">Swollen Blood Vessels</option>
+      <option value="Puffy Face and Eyes">Puffy Face and Eyes</option>
+      <option value="Enlarged Thyroid">Enlarged Thyroid</option>
+      <option value="Brittle Nails">Brittle Nails</option>
+      <option value="Swollen Extremeties">Swollen Extremeties</option>
+      <option value="Excessive Hunger">Excessive Hunger</option>
+      <option value="Extra Marital Contacts">Extra Marital Contacts</option>
+      <option value="Drying and Tingling Lips">Drying and Tingling Lips</option>
+      <option value="Slurred Speech">Slurred Speech</option>
+      <option value="Knee Pain">Knee Pain</option>
+      <option value="Hip Joint Pain">Hip Joint Pain</option>
+      <option value="Muscle Weakness">Muscle Weakness</option>
+      <option value="Stiff Neck">Stiff Neck</option>
+      <option value="Swelling Joints">Swelling Joints</option>
+      <option value="Movement Stiffness">Movement Stiffness</option>
+      <option value="Spinning Movements">Spinning Movements</option>
+      <option value="Loss of Balance">Loss of Balance</option>
+      <option value="Unsteadiness">Unsteadiness</option>
+      <option value="Weakness of One Body Side">Weakness of One Body Side</option>
+      <option value="Loss of Smell">Loss of Smell</option>
+      <option value="Bladder Discomfort">Bladder Discomfort</option>
+      <option value="Foul Smell of Urine">Foul Smell of Urine</option>
+      <option value="Continuous Feel of Urine">Continuous Feel of Urine</option>
+      <option value="Passage of Gases">Passage of Gases</option>
+      <option value="Internal Itching">Internal Itching</option>
+      <option value="Toxic Look (Typhos)">Toxic Look (Typhos)</option>
+      <option value="Depression">Depression</option>
+      <option value="Irritability">Irritability</option>
+      <option value="Muscle Pain">Muscle Pain</option>
+      <option value="Altered Sensorium">Altered Sensorium</option>
+      <option value="Red Spots Over Body">Red Spots Over Body</option>
+      <option value="Belly Pain">Belly Pain</option>
+      <option value="Abnormal Menstruation">Abnormal Menstruation</option>
+      <option value="Dischromic Patches">Dischromic Patches</option>
+      <option value="Watering from Eyes">Watering from Eyes</option>
+      <option value="Increased Appetite">Increased Appetite</option>
+      <option value="Polyuria">Polyuria</option>
+      <option value="Family History">Family History</option>
+      <option value="Mucoid Sputum">Mucoid Sputum</option>
+      <option value="Rusty Sputum">Rusty Sputum</option>
+      <option value="Lack of Concentration">Lack of Concentration</option>
+      <option value="Visual Disturbances">Visual Disturbances</option>
+      <option value="Receiving Blood Transfusion">Receiving Blood Transfusion</option>
+      <option value="Receiving Unsterile Injections">Receiving Unsterile Injections</option>
+      <option value="Coma">Coma</option>
+      <option value="Stomach Bleeding">Stomach Bleeding</option>
+      <option value="Distention of Abdomen">Distention of Abdomen</option>
+      <option value="History of Alcohol Consumption">History of Alcohol Consumption</option>
+      <option value="Fluid Overload">Fluid Overload</option>
+      <option value="Blood in Sputum">Blood in Sputum</option>
+      <option value="Prominent Veins on Calf">Prominent Veins on Calf</option>
+      <option value="Palpitations">Palpitations</option>
+      <option value="Painful Walking">Painful Walking</option>
+      <option value="Pus filled Pimples">Pus-filled Pimples</option>
+      <option value="Blackheads">Blackheads</option>
+      <option value="Scurring">Scarring</option>
+      <option value="Skin Peeling">Skin Peeling</option>
+      <option value="Silver like Dusting">Silver-like Dusting</option>
+      <option value="Small Dents in Nails">Small Dents in Nails</option>
+      <option value="Inflammatory Nails">Inflammatory Nails</option>
+      <option value="Blister">Blister</option>
+      <option value="Red Sore Around Nose">Red Sore Around Nose</option>
+      <option value="Yellow Crust Ooze">Yellow Crust Ooze</option>
+    </select>
+    <div class="buttonss">
+      <button onclick="predictDisease()" id="buttonpredict">Predict</button>
+      <button onclick="savePrediction()" id="buttonsavepredict">Save Prediction</button>
+    </div>
+    <div id="predictionResult" class="prediction-result"></div>
+  </main>
+  <div id="prec">
+    <h2 style="text-align: center; color: #ff0000;">CURE</h2>
+    <p id="disease-prec"></p>
+  </div>
+
+  <div id="successMessage" class="success-message">Prediction saved successfully!</div>
+
+  <script>
+    let symptoms = null;
+    let prediction = null;
+    let email;
+    const symptomList = [
+      "ITCHING", "SKIN RASH", "NODAL SKIN ERUPTIONS", "CONTINUOUS SNEEZING", "SHIVERING", "CHILLS",
+      "JOINT PAIN", "STOMACH PAIN", "ACIDITY", "ULCERS ON TONGUE", "MUSCLE WASTING", "VOMITING",
+      "BURNING MICTURITION", "SPOTTING URINATION", "FATIGUE", "WEIGHT GAIN", "ANXIETY",
+      "COLD HANDS AND FEETS", "MOOD SWINGS", "WEIGHT LOSS", "RESTLESSNESS", "LETHARGY",
+      "PATCHES IN THROAT", "IRREGULAR SUGAR LEVEL", "COUGH", "HIGH FEVER", "SUNKEN EYES",
+      "BREATHLESSNESS", "SWEATING", "DEHYDRATION", "INDIGESTION", "HEADACHE", "YELLOWISH SKIN",
+      "DARK URINE", "NAUSEA", "LOSS OF APPETITE", "PAIN BEHIND THE EYES", "BACK PAIN",
+      "CONSTIPATION", "ABDOMINAL PAIN", "DIARRHOEA", "MILD FEVER", "YELLOW URINE",
+      "YELLOWING OF EYES", "ACUTE LIVER FAILURE", "FLUID OVERLOAD", "SWELLING OF STOMACH",
+      "SWELLED LYMPH NODES", "MALAISE", "BLURRED AND DISTORTED VISION", "PHLEGM",
+      "THROAT IRRITATION", "REDNESS OF EYES", "SINUS PRESSURE", "RUNNY NOSE", "CONGESTION",
+      "CHEST PAIN", "WEAKNESS IN LIMBS", "FAST HEART RATE", "PAIN DURING BOWEL MOVEMENTS",
+      "PAIN IN ANAL REGION", "BLOODY STOOL", "IRRITATION IN ANUS", "NECK PAIN", "DIZZINESS",
+      "CRAMPS", "BRUISING", "OBESITY", "SWOLLEN LEGS", "SWOLLEN BLOOD VESSELS", "PUFFY FACE AND EYES",
+      "ENLARGED THYROID", "BRITTLE NAILS", "SWOLLEN EXTREMETIES", "EXCESSIVE HUNGER",
+      "EXTRA MARITAL CONTACTS", "DRYING AND TINGLING LIPS", "SLURRED SPEECH", "KNEE PAIN",
+      "HIP JOINT PAIN", "MUSCLE WEAKNESS", "STIFF NECK", "SWELLING JOINTS", "MOVEMENT STIFFNESS",
+      "SPINNING MOVEMENTS", "LOSS OF BALANCE", "UNSTEADINESS", "WEAKNESS OF ONE BODY SIDE",
+      "LOSS OF SMELL", "BLADDER DISCOMFORT", "FOUL SMELL OF URINE", "CONTINUOUS FEEL OF URINE",
+      "PASSAGE OF GASES", "INTERNAL ITCHING", "TOXIC LOOK (TYPHOS)", "DEPRESSION", "IRRITABILITY",
+      "MUSCLE PAIN", "ALTERED SENSORIUM", "RED SPOTS OVER BODY", "BELLY PAIN", "ABNORMAL MENSTRUATION",
+      "DISCHROMIC PATCHES", "WATERING FROM EYES", "INCREASED APPETITE", "POLYURIA", "FAMILY HISTORY",
+      "MUCOID SPUTUM", "RUSTY SPUTUM", "LACK OF CONCENTRATION", "VISUAL DISTURBANCES",
+      "RECEIVING BLOOD TRANSFUSION", "RECEIVING UNSTERILE INJECTIONS", "COMA", "STOMACH BLEEDING",
+      "DISTENTION OF ABDOMEN", "HISTORY OF ALCOHOL CONSUMPTION", "FLUID OVERLOAD", "BLOOD IN SPUTUM",
+      "PROMINENT VEINS ON CALF", "PALPITATIONS", "PAINFUL WALKING", "PUS FILLED PIMPLES",
+      "BLACKHEADS", "SCURRING", "SKIN PEELING", "SILVER LIKE DUSTING", "SMALL DENTS IN NAILS",
+      "INFLAMMATORY NAILS", "BLISTER", "RED SORE AROUND NOSE", "YELLOW CRUST OOZE"
+    ];
+
+    const diseaseInfo = {
+      "(vertigo) Paroymsal  Positional Vertigo": "1. Definition: A type of vertigo caused by specific head movements.\n" +
+        "2. Epley Maneuver: A series of head movements to reposition inner ear particles.\n" +
+        "3. Medications: Antihistamines or anti-nausea drugs may alleviate symptoms.\n" +
+        "4. Vestibular Rehabilitation: Exercises to improve balance and minimize vertigo.",
+
+      "AIDS": "1. Definition: Acquired Immunodeficiency Syndrome caused by HIV.\n" +
+        "2. Antiretroviral Therapy (ART): Medications suppressing HIV replication.\n" +
+        "3. Opportunistic Infection Management: Treating and preventing infections.\n" +
+        "4. Supportive Care: Maintaining immune health, nutrition, and regular check-ups.",
+
+      "Acne": "1. Definition: Skin condition causing pimples, blackheads, and whiteheads.\n" +
+        "2. Topical Treatments: Benzoyl peroxide, salicylic acid for mild cases.\n" +
+        "3. Oral Antibiotics: For severe or cystic acne, under medical supervision.\n" +
+        "4. Lifestyle Adjustments: Healthy diet, proper skincare, avoiding triggers.",
+
+      "Alcoholic hepatitis": "1. Definition: Liver inflammation due to excessive alcohol consumption.\n" +
+        "2. Alcohol Cessation: Complete abstinence from alcohol is crucial.\n" +
+        "3. Nutritional Support: Adequate intake of vitamins and nutrients.\n" +
+        "4. Medical Treatment: Corticosteroids or liver transplant for severe cases.",
+
+      "Allergy": "1. Definition: Immune response to allergens causing various symptoms.\n" +
+        "2. Allergen Avoidance: Identifying and staying away from triggers.\n" +
+        "3. Medications: Antihistamines, decongestants, or corticosteroids.\n" +
+        "4. Immunotherapy: Allergy shots to desensitize the immune response.",
+
+      "Arthritis": "1. Definition: Inflammation of joints causing pain and stiffness.\n" +
+        "2. Medications: Pain relievers, anti-inflammatories, disease-modifying drugs.\n" +
+        "3. Physical Therapy: Exercises to improve joint mobility and strength.\n" +
+        "4. Lifestyle Changes: Weight management, joint protection, stress reduction.",
+
+      "Bronchial Asthma": "1. Definition: Chronic respiratory condition causing airway constriction.\n" +
+        "2. Inhaled Bronchodilators: Quick-relief medications for acute symptoms.\n" +
+        "3. Inhaled Corticosteroids: Long-term control of inflammation.\n" +
+        "4. Allergen Avoidance: Identifying and avoiding triggers.",
+
+      "Cervical spondylosis": "1. Definition: Degeneration of cervical spine causing neck pain.\n" +
+        "2. Physical Therapy: Exercises to improve posture and strengthen muscles.\n" +
+        "3. Medications: Pain relievers, muscle relaxants, anti-inflammatories.\n" +
+        "4. Heat/Cold Therapy: Applying heat or cold to alleviate pain.",
+
+      "Chicken pox": "1. Definition: Contagious viral infection causing itchy skin rashes.\n" +
+        "2. Symptom Relief: Calamine lotion, oatmeal baths for itching.\n" +
+        "3. Antiviral Medications: In severe cases, under medical guidance.\n" +
+        "4. Rest and Hydration: Adequate fluids and rest to aid recovery.",
+
+      "Chronic cholestasis": "1. Definition: Reduced bile flow from liver leading to bile buildup.\n" +
+        "2. Ursodeoxycholic Acid: Medication to improve bile flow.\n" +
+        "3. Management of Symptoms: Itching relief, vitamin supplementation.\n" +
+        "4. Lifestyle Changes: Balanced diet, hydration, regular exercise.",
+
+      "Common Cold": "1. Definition: Viral infection causing runny nose, sneezing, sore throat.\n" +
+        "2. Rest and Hydration: Proper rest and fluids for recovery.\n" +
+        "3. Symptom Relief: Over-the-counter cold remedies.\n" +
+        "4. Good Hygiene Practices: Frequent handwashing, covering mouth when sneezing.",
+
+      "Dengue": "1. Definition: Mosquito-borne viral infection causing fever, pain.\n" +
+        "2. Supportive Care: Rest, hydration, pain relievers.\n" +
+        "3. Medical Monitoring: Regular blood tests, medical supervision.\n" +
+        "4. Preventing Mosquito Bites: Use of repellents, mosquito nets.",
+
+      "Diabetes": "1. Definition: Chronic condition affecting blood sugar levels.\n" +
+        "2. Lifestyle Changes: Balanced diet, exercise, weight management.\n" +
+        "3. Oral Medications/Insulin: Depending on diabetes type and severity.\n" +
+        "4. Regular Monitoring: Blood sugar checks, medical follow-up.",
+
+      "Dimorphic hemmorhoids(piles)": "1. Definition: Swollen blood vessels in the rectal area.\n" +
+        "2. Diet and Hydration: High-fiber diet, drinking fluids to prevent constipation.\n" +
+        "3. Topical Treatments: Ointments, creams for symptom relief.\n" +
+        "4. Medical Procedures: Rubber band ligation, surgery for severe cases.",
+
+      "Drug Reaction": "1. Definition: Adverse response to medications or substances.\n" +
+        "2. Discontinuation: Stop the offending drug or substance.\n" +
+        "3. Symptom Management: Antihistamines, corticosteroids for allergic reactions.\n" +
+        "4. Medical Attention: Severe reactions may require emergency care.",
+
+      "Fungal infection": "1. Definition: Skin, nail, or mucous membrane infection by fungi.\n" +
+        "2. Antifungal Medications: Topical or oral antifungal drugs.\n" +
+        "3. Hygiene and Prevention: Keep affected areas clean and dry.\n" +
+        "4. Avoid Sharing: Prevent transmission by not sharing personal items.",
+
+      "GERD": "1. Definition: Gastroesophageal reflux disease causing acid reflux.\n" +
+        "2. Dietary Changes: Avoid trigger foods, smaller meals.\n" +
+        "3. Medications: Proton pump inhibitors, antacids.\n" +
+        "4. Lifestyle Modifications: Elevating head during sleep, weight management.",
+
+      "Gastroenteritis": "1. Definition: Stomach and intestinal inflammation causing vomiting, diarrhea.\n" +
+        "2. Hydration: Oral rehydration solutions to prevent dehydration.\n" +
+        "3. Diet: Bland, easy-to-digest foods during recovery.\n" +
+        "4. Rest and Monitoring: Allow the body to recover, seek medical care if severe.",
+
+      "Heart attack": "1. Definition: Blockage of blood flow to the heart causing tissue damage.\n" +
+        "2. Emergency Care: Call 911, take aspirin (if prescribed).\n" +
+        "3. Medical Interventions: Angioplasty, stent placement, clot-dissolving drugs.\n" +
+        "4. Cardiac Rehabilitation: Lifestyle changes, exercise under medical guidance.",
+
+      "Hepatitis B": "1. Definition: Viral infection affecting the liver.\n" +
+        "2. Antiviral Medications: Suppress viral replication.\n" +
+        "3. Vaccination: Preventive vaccine for uninfected individuals.\n" +
+        "4. Monitoring: Regular check-ups, liver function tests.",
+
+      "Hepatitis C": "1. Definition: Viral infection affecting the liver.\n" +
+        "2. Antiviral Medications: Newer medications with high cure rates.\n" +
+        "3. Liver Health: Avoid alcohol, maintain a healthy lifestyle.\n" +
+        "4. Screening and Testing: Identifying infection, monitoring liver function.",
+
+      "Hepatitis D": "1. Definition: Viral infection only in presence of Hepatitis B.\n" +
+        "2. Hepatitis B Treatment: Treating underlying HBV infection.\n" +
+        "3. Antiviral Therapy: Managing HDV infection if coexisting with HBV.\n" +
+        "4. Preventive Measures: Hepatitis B vaccination.",
+
+      "Hepatitis E": "1. Definition: Viral infection causing liver inflammation.\n" +
+        "2. Supportive Care: Rest, hydration, avoiding alcohol.\n" +
+        "3. Symptom Management: Medications for nausea, pain.\n" +
+        "4. Preventive Measures: Safe drinking water, good hygiene.",
+
+      "Hypertension": "1. Definition: High blood pressure, a risk factor for heart disease.\n" +
+        "2. Lifestyle Changes: Healthy diet, exercise, stress reduction.\n" +
+        "3. Medications: Antihypertensives, prescribed by a doctor.\n" +
+        "4. Regular Monitoring: Blood pressure checks, medical follow-up.",
+
+      "Hyperthyroidism": "1. Definition: Overactive thyroid gland causing increased metabolism.\n" +
+        "2. Antithyroid Medications: Methimazole, propylthiouracil.\n" +
+        "3. Radioactive Iodine Therapy: Reducing thyroid activity.\n" +
+        "4. Surgery: Partial or complete thyroidectomy if other treatments fail.",
+
+      "Hypoglycemia": "1. Definition: Low blood sugar levels causing symptoms.\n" +
+        "2. Immediate Treatment: Consuming glucose-rich foods or drinks.\n" +
+        "3. Balanced Diet: Eating regular, balanced meals to prevent drops.\n" +
+        "4. Medication Adjustment: If hypoglycemia is medication-induced.",
+
+      "Hypothyroidism": "1. Definition: Underactive thyroid gland causing metabolism slowdown.\n" +
+        "2. Hormone Replacement: Levothyroxine to restore thyroid function.\n" +
+        "3. Regular Monitoring: Blood tests to adjust medication dosage.\n" +
+        "4. Lifestyle Management: Balanced diet, exercise, stress reduction.",
+
+      "Impetigo": "1. Definition: Bacterial skin infection causing sores, blisters.\n" +
+        "2. Antibiotics: Topical or oral antibiotics as prescribed.\n" +
+        "3. Hygiene: Keep affected area clean, avoid scratching.\n" +
+        "4. Avoid Spreading: Prevent transmission through good hygiene.",
+
+      "Jaundice": "1. Definition: Yellowing of skin and eyes due to bilirubin buildup.\n" +
+        "2. Underlying Cause: Treating the condition causing jaundice.\n" +
+        "3. Rest and Hydration: Allow the body to recover, stay hydrated.\n" +
+        "4. Medical Supervision: Monitoring bilirubin levels, seeking care if severe.",
+
+      "Malaria": "1. Definition: Mosquito-borne infection causing fever, chills.\n" +
+        "2. Antimalarial Medications: Specific drugs based on the region.\n" +
+        "3. Preventive Measures: Insect repellents, bed nets.\n" +
+        "4. Early Diagnosis: Prompt treatment upon symptom onset.",
+
+      "Migraine": "1. Definition: Recurring severe headaches, often with other symptoms.\n" +
+        "2. Pain Management: Over-the-counter pain relievers or prescribed drugs.\n" +
+        "3. Lifestyle Modifications: Identifying triggers, stress reduction.\n" +
+        "4. Medications: Preventive medications for frequent migraines.",
+
+      "Osteoarthritis": "1. Definition: Degenerative joint disease causing pain, stiffness.\n" +
+        "2. Pain Relief: Over-the-counter pain relievers, topical creams.\n" +
+        "3. Physical Therapy: Exercises to improve joint mobility, strength.\n" +
+        "4. Weight Management: Reducing strain on joints through weight control.",
+
+      "Paralysis (brain hemorrhage)": "1. Definition: Loss of movement due to bleeding in the brain.\n" +
+        "2. Medical Emergency: Immediate hospitalization and treatment.\n" +
+        "3. Rehabilitation: Physical therapy, occupational therapy.\n" +
+        "4. Lifestyle Adjustments: Supportive care for daily activities.",
+
+      "Peptic ulcer diseae": "1. Definition: Open sores in the stomach or duodenum.\n" +
+        "2. Antibiotics: If caused by H. pylori infection.\n" +
+        "3. Acid Reducing Medications: Proton pump inhibitors, H2 blockers.\n" +
+        "4. Dietary Changes: Avoiding spicy, acidic foods.",
+
+      "Pneumonia": "1. Definition: Lung infection causing fever, cough, difficulty breathing.\n" +
+        "2. Antibiotics: Targeting the specific bacteria causing infection.\n" +
+        "3. Rest and Hydration: Allowing the body to heal, staying hydrated.\n" +
+        "4. Medical Care: Hospitalization if severe or high-risk.",
+
+      "Psoriasis": "1. Definition: Chronic skin condition causing red, scaly patches.\n" +
+        "2. Topical Treatments: Corticosteroids, vitamin D creams.\n" +
+        "3. Phototherapy: Controlled exposure to UV light.\n" +
+        "4. Systemic Medications: For severe cases, under medical supervision.",
+
+      "Tuberculosis": "1. Definition: Bacterial lung infection causing cough, fatigue.\n" +
+        "2. Antibiotics: Specific drug regimen for several months.\n" +
+        "3. Directly Observed Therapy (DOT): Ensuring proper medication adherence.\n" +
+        "4. Isolation: Preventing transmission during treatment.",
+
+      "Typhoid": "1. Definition: Bacterial infection causing fever, abdominal discomfort.\n" +
+        "2. Antibiotics: Targeting the Salmonella bacteria.\n" +
+        "3. Hydration and Nutrition: Fluids, easily digestible foods.\n" +
+        "4. Preventive Measures: Clean water, proper sanitation.",
+
+      "Urinary tract infection": "1. Definition: Bacterial infection affecting the urinary system.\n" +
+        "2. Antibiotics: Prescribed to eliminate the infection.\n" +
+        "3. Hydration: Drinking fluids to flush out bacteria.\n" +
+        "4. Good Hygiene Practices: Wiping front to back, urinating after intercourse.",
+
+      "Varicose veins": "1. Definition: Enlarged, twisted veins causing discomfort.\n" +
+        "2. Compression Stockings: Improving blood circulation.\n" +
+        "3. Exercise: Regular physical activity to enhance vein health.\n" +
+        "4. Sclerotherapy: Injecting a solution to close off veins.",
+
+      "hepatitis A": "1. Definition: Viral infection affecting the liver.\n" +
+        "2. Supportive Care: Rest, hydration, healthy diet.\n" +
+        "3. Vaccination: Preventive vaccine for uninfected individuals.\n" +
+        "4. Good Hygiene Practices: Preventing transmission through sanitation."
+    };
+
+    // Add an event listener to the select element to handle selection changes
+    document.getElementById('symptomsSelect').addEventListener('change', updateSymptomsInput);
+
+    // Add an event listener to the input textbox to handle typing and pasting
+    const inputTextbox = document.getElementById('symptomsInput');
+    inputTextbox.addEventListener('input', handleInput);
+    inputTextbox.addEventListener('paste', handlePaste);
+
+    function sort_symptoms(symptoms) {
+      return symptoms
+        .split(',')
+        .map(symptom => symptom.trim().toUpperCase())
+        .sort((a, b) => symptomList.indexOf(a) - symptomList.indexOf(b))
+        .join(',');
+    }
+
+    function updateSymptomsInput() {
+      // Get the selected symptoms from the multi-select dropdown and convert them to uppercase
+      const selectedSymptoms = Array.from(document.getElementById('symptomsSelect').selectedOptions)
+        .map(option => option.value.trim().toUpperCase()) // Convert selected symptoms to uppercase and remove leading/trailing spaces
+        .filter(symptom => symptom !== ''); // Filter out empty symptoms
+
+      // Get the current input value from the textbox and convert it to uppercase
+      const currentInputValue = document.getElementById('symptomsInput').value;
+      const currentSymptoms = currentInputValue
+        ? currentInputValue.split(',').map(symptom => symptom.trim().toUpperCase()) // Convert to uppercase and remove leading/trailing spaces
+        : [];
+
+      // Merge the new symptoms with the existing symptoms, and filter out duplicates (case-insensitive comparison)
+      const mergedSymptoms = [...currentSymptoms, ...selectedSymptoms]
+        .filter((symptom, index, self) => self.indexOf(symptom) === index);
+
+      // Sort the symptoms based on the symptomList
+      const sortedSymptoms = sort_symptoms(mergedSymptoms.join(','));
+
+      // Update the text input with the sorted symptoms
+      document.getElementById('symptomsInput').value = sortedSymptoms;
+    }
+    function predictDisease() {
+      updateSymptomsInput();
+      const sortedSymptoms = document.getElementById('symptomsInput').value;
+      symptoms=sortedSymptoms;
+
+      fetch('http://localhost:3500/predict', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `symptoms=${encodeURIComponent(sortedSymptoms.toLowerCase().trim())}`,
+      })
+        .then(response => response.json())
+        .then(data => {
+          const predictionResult = data.prediction;
+          const predictionMessage = document.getElementById('predictionResult');
+          predictionMessage.textContent = `Prediction: ${predictionResult || 'Not available'}`;
+          prediction = predictionResult;
+          const diseaseName = prediction;
+          const diseaseInformation = diseaseInfo[diseaseName];
+
+          const diseasePrecn = document.getElementById('disease-prec');
+          if (diseaseInformation) {
+            // Split the disease information into lines and join with <br> tags
+            const diseaseInfoLines = diseaseInformation.split('\n').map(line => `${line}<br>`).join('');
+            diseasePrecn.innerHTML = diseaseInfoLines;
+          } else {
+            diseasePrecn.textContent = 'Disease information not available';
+          }
+          const diseasePrecMessages = document.getElementById('prec');
+          diseasePrecMessages.style.display = 'block';
+
+          predictionMessage.style.display = 'block';
+          document.getElementById('symptomsInput').value = '';
+          const selectElement = document.getElementById('symptomsSelect');
+          Array.from(selectElement.options).forEach(option => (option.selected = false));
+        })
+        .catch(error => {
+          console.error('Error:', error.message);
+        });
+      document.getElementById('symptomsInput').value = '';
+    }
+
+    function savePrediction(email) {
+      // Send an HTTP POST request to the server to save the prediction
+      fetch('/savePrediction', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: '<%= email %>', symptoms, prediction }), // Change 'prediction' to 'preddiction'
+      })
+        .then(response => response.text())
+        .then(message => {
+          // Display a success or error message based on the response from the server
+          const successMessage = document.getElementById('successMessage');
+
+          if (message === 'Prediction Saved Successfully') {
+            successMessage.textContent = 'Prediction saved successfully!';
+            successMessage.style.backgroundColor = '#4CAF50'; // Green background color for success
+          } else {
+            successMessage.textContent = 'Error saving prediction!';
+            successMessage.style.backgroundColor = '#f44336'; // Red background color for error
+          }
+          // Show the message
+          successMessage.style.display = 'block';
+          // Hide the message after 10 seconds
+          setTimeout(() => {
+            successMessage.style.display = 'none';
+          }, 10000); // 10 seconds (10000 milliseconds)
+        })
+        .catch(error => {
+          console.error('Error:', error.message);
+          alert('An error occurred while saving the prediction.');
+        });
+    }
+    // Function to convert the text to uppercase while typing
+    function handleInput(event) {
+      const inputText = event.target.value;
+      event.target.value = inputText.toUpperCase().trim(); // Convert to uppercase and remove leading/trailing spaces
+    }
+
+    // Function to convert the pasted text to uppercase
+    function handlePaste(event) {
+      event.preventDefault();
+      const clipboardText = event.clipboardData.getData('text/plain');
+      const symptomsInUppercase = clipboardText.toUpperCase();
+      document.execCommand('insertText', false, symptomsInUppercase.trim()); // Convert to uppercase and remove leading/trailing spaces
+    }
+    function redirectToMyPredictions(email, name) {
+      // Redirect to the /my-predictions route with the email and name as query parameters
+      window.location.href = `/my-prediction?email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}`;
+    }
+  </script>
+
+</body>
+
+</html>

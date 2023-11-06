@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Login</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      background-image: url('/img/bgpho.jpg');
+      /* Update the path */
+      background-size: 100% 100%;
+      background-position: center;
+      background-attachment: fixed;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      text-align: center;
+      background-color: #007bff;
+      padding: 10px 20px;
+      color: #fff;
+      height: 50px;
+    }
+
+    h1 {
+      font-size: 24px;
+      text-transform: uppercase;
+      margin: 0;
+      flex: 1;
+      /* Allow the h1 element to take the available space and be centered */
+    }
+
+    form {
+      max-width: 400px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      height: 250px;
+      text-align: left;
+      /* Align the form content to the left */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .alert-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 50px;
+      /* Adjust the height as needed */
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+      text-align: left;
+      /* Align the labels and inputs to the left */
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      width: 350px;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+    }
+
+    button[type="submit"] {
+      font-size: 16px;
+      padding: 12px 25px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Prognosis : AI Disease Detection System</h1>
+  </header>
+  <form id="login-form" action="/login" method="post">
+    <div class="form-group">
+      <label for="email-input">Email:</label>
+      <input type="email" id="email" name="email" required>
+    </div>
+    <div class="form-group">
+      <label for="password-input">Password:</label>
+      <input type="password" id="password" name="password" required>
+    </div>
+    <button type="submit">Login</button>
+  </form>
+  <% if (typeof alertMessage !=='undefined' ) { %>
+    <div class="alert-container">
+      <div class="alert">
+        <%= alertMessage %>
+      </div>
+    </div>
+    <% } %>
+
+      <script src="js/login.js" defer></script>
+</body>
+
+</html>
